@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Iron Path — Your Training Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0f0e;
+    --surface: #161917;
+    --surface2: #1e2220;
+    --border: #2a2e2b;
+    --accent: #b5f23d;
+    --accent2: #5dfc8d;
+    --accent-dim: rgba(181,242,61,0.12);
+    --text: #e8ede9;
+    --text-muted: #7a8a7d;
+    --red: #ff5252;
+    --orange: #ff9f1c;
+    --blue: #4fc3f7;
+    --purple: #ce93d8;
+    --gold: #ffd54f;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* BG texture */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background: radial-gradient(ellipse at 20% 20%, rgba(181,242,61,0.04) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 80%, rgba(93,252,141,0.03) 0%, transparent 60%);
+    pointer-events: none; z-index: 0;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(14,15,14,0.92);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 60px;
+  }
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 26px; letter-spacing: 2px;
+    color: var(--accent);
+  }
+  .nav-logo span { color: var(--text-muted); }
+  .nav-links { display: flex; gap: 4px; }
+  .nav-links button {
+    background: none; border: none;
+    color: var(--text-muted); cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px; font-weight: 500;
+    padding: 6px 12px; border-radius: 6px;
+    transition: all 0.15s;
+    letter-spacing: 0.5px;
+  }
+  .nav-links button:hover, .nav-links button.active {
+    color: var(--accent); background: var(--accent-dim);
+  }
+  .nav-streak {
+    display: flex; align-items: center; gap: 6px;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 20px; padding: 4px 12px 4px 8px;
+    font-family: 'DM Mono', monospace; font-size: 13px;
+  }
+  .streak-fire { font-size: 16px; }
+  .streak-num { color: var(--gold); font-weight: 500; }
+
+  /* PAGES */
+  .page { display: none; position: relative; z-index: 1; }
+  .page.active { display: block; }
+  .container { max-width: 900px; margin: 0 auto; padding: 32px 24px; }
+
+  /* TODAY PAGE */
+  .day-hero {
+    display: grid; grid-template-columns: 1fr auto;
+    align-items: start; gap: 24px;
+    margin-bottom: 32px;
+  }
+  .day-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px; color: var(--text-muted);
+    letter-spacing: 2px; text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .day-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(48px, 8vw, 80px);
+    line-height: 0.9; letter-spacing: 2px;
+    color: var(--text);
+  }
+  .day-title span { color: var(--accent); }
+  .day-subtitle {
+    font-size: 16px; color: var(--text-muted);
+    margin-top: 10px; font-weight: 300;
+  }
+  .checkin-btn {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 6px; padding: 20px 28px; border-radius: 16px;
+    border: 2px solid var(--border); background: var(--surface);
+    cursor: pointer; transition: all 0.2s; min-width: 120px;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .checkin-btn:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .checkin-btn.checked { background: var(--accent-dim); border-color: var(--accent); }
+  .checkin-icon { font-size: 36px; }
+  .checkin-label { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); font-weight: 500; }
+  .checkin-status { font-size: 13px; font-weight: 600; color: var(--accent); display: none; }
+  .checkin-btn.checked .checkin-status { display: block; }
+  .checkin-btn.checked .checkin-label { display: none; }
+
+  /* Quote bar */
+  .quote-bar {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 8px; padding: 14px 18px;
+    margin-bottom: 28px;
+    font-size: 14px; color: var(--text-muted); font-style: italic;
+  }
+
+  /* TYPE BADGE */
+  .type-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 10px; border-radius: 20px;
+    font-size: 11px; font-weight: 600; letter-spacing: 1px;
+    text-transform: uppercase; margin-bottom: 24px;
+  }
+  .badge-strength { background: rgba(79,195,247,0.15); color: var(--blue); border: 1px solid rgba(79,195,247,0.3); }
+  .badge-cardio { background: rgba(255,159,28,0.15); color: var(--orange); border: 1px solid rgba(255,159,28,0.3); }
+  .badge-recovery { background: rgba(206,147,216,0.15); color: var(--purple); border: 1px solid rgba(206,147,216,0.3); }
+  .badge-rest { background: rgba(122,138,125,0.12); color: var(--text-muted); border: 1px solid var(--border); }
+
+  /* EXERCISE TABLE */
+  .section-header {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px; letter-spacing: 2px; color: var(--accent);
+    margin: 28px 0 14px; display: flex; align-items: center; gap: 10px;
+  }
+  .section-header::after {
+    content: ''; flex: 1; height: 1px; background: var(--border);
+  }
+  .exercise-grid { display: flex; flex-direction: column; gap: 8px; }
+  .exercise-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 14px 18px;
+    display: grid; grid-template-columns: 1fr auto;
+    align-items: center; gap: 12px;
+    transition: border-color 0.15s;
+    position: relative; overflow: hidden;
+  }
+  .exercise-card::before {
+    content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+    width: 3px; background: var(--accent); opacity: 0.3;
+    transition: opacity 0.15s;
+  }
+  .exercise-card:hover { border-color: rgba(181,242,61,0.3); }
+  .exercise-card:hover::before { opacity: 1; }
+  .ex-name { font-weight: 600; font-size: 15px; margin-bottom: 3px; }
+  .ex-meta { font-size: 12px; color: var(--text-muted); }
+  .ex-meta strong { color: var(--accent); font-family: 'DM Mono', monospace; }
+  .ex-notes { font-size: 12px; color: var(--text-muted); margin-top: 5px; line-height: 1.5; }
+  .ex-video {
+    display: flex; align-items: center; gap: 5px;
+    background: rgba(255,82,82,0.12); border: 1px solid rgba(255,82,82,0.25);
+    color: #ff7070; font-size: 11px; font-weight: 600;
+    padding: 5px 10px; border-radius: 6px; text-decoration: none;
+    transition: all 0.15s; white-space: nowrap;
+    letter-spacing: 0.5px;
+  }
+  .ex-video:hover { background: rgba(255,82,82,0.2); color: #ff9090; }
+
+  /* REST DAY */
+  .rest-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; padding: 40px; text-align: center;
+  }
+  .rest-icon { font-size: 64px; margin-bottom: 16px; }
+  .rest-title { font-family: 'Bebas Neue', sans-serif; font-size: 36px; color: var(--text-muted); letter-spacing: 2px; }
+  .rest-msg { color: var(--text-muted); font-size: 15px; margin-top: 10px; max-width: 400px; margin-left: auto; margin-right: auto; }
+
+  /* STATS ROW */
+  .stats-row {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+    margin-bottom: 28px;
+  }
+  .stat-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 16px 18px;
+  }
+  .stat-val { font-family: 'Bebas Neue', sans-serif; font-size: 36px; color: var(--accent); line-height: 1; }
+  .stat-label { font-size: 11px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; margin-top: 4px; }
+
+  /* CALENDAR */
+  .cal-grid {
+    display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px;
+    margin-top: 16px;
+  }
+  .cal-day-header { text-align: center; font-size: 10px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; padding-bottom: 6px; }
+  .cal-day {
+    aspect-ratio: 1; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-family: 'DM Mono', monospace;
+    background: var(--surface); border: 1px solid var(--border);
+    color: var(--text-muted); position: relative;
+  }
+  .cal-day.checked { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
+  .cal-day.today { border-color: var(--blue); color: var(--blue); }
+  .cal-day.checked.today { border-color: var(--accent); }
+  .cal-day.empty { background: none; border-color: transparent; }
+  .cal-day .checkmark { position: absolute; top: 2px; right: 3px; font-size: 9px; }
+
+  /* WEEKLY OVERVIEW */
+  .week-grid { display: flex; flex-direction: column; gap: 10px; }
+  .week-row {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 16px 20px;
+    display: grid; grid-template-columns: 100px 1fr auto;
+    align-items: center; gap: 16px;
+  }
+  .week-day-name { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 1px; }
+  .week-focus { font-size: 14px; }
+  .week-focus-name { font-weight: 600; }
+  .week-focus-desc { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .week-dur { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text-muted); }
+
+  /* NUTRITION */
+  .nutrition-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .nutrition-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 20px;
+  }
+  .nutrition-card h3 {
+    font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 1px;
+    color: var(--accent); margin-bottom: 10px;
+  }
+  .nutrition-card p { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
+  .nutrition-card .big-num { font-family: 'Bebas Neue', sans-serif; font-size: 48px; color: var(--text); line-height: 1; margin-bottom: 6px; }
+  .nutrition-card .unit { font-size: 14px; color: var(--text-muted); }
+
+  /* WEIGHT LOG */
+  .weight-input-row {
+    display: flex; gap: 10px; margin-bottom: 20px;
+  }
+  .weight-input-row input {
+    flex: 1; background: var(--surface); border: 1px solid var(--border);
+    color: var(--text); font-family: 'DM Mono', monospace; font-size: 16px;
+    padding: 12px 16px; border-radius: 10px; outline: none;
+    transition: border-color 0.15s;
+  }
+  .weight-input-row input:focus { border-color: var(--accent); }
+  .btn-primary {
+    background: var(--accent); color: #0e0f0e;
+    border: none; border-radius: 10px;
+    padding: 12px 20px; font-family: 'DM Sans', sans-serif;
+    font-weight: 700; font-size: 14px; cursor: pointer;
+    transition: all 0.15s; letter-spacing: 0.5px;
+  }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(181,242,61,0.3); }
+
+  /* Chart */
+  .chart-wrap {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 20px; margin-bottom: 20px;
+    overflow-x: auto;
+  }
+  canvas#weightChart { width: 100%; max-height: 200px; }
+
+  .weight-log-list { display: flex; flex-direction: column; gap: 6px; }
+  .weight-log-item {
+    display: flex; justify-content: space-between; align-items: center;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 8px; padding: 10px 14px;
+    font-family: 'DM Mono', monospace; font-size: 13px;
+  }
+  .weight-log-item .wl-date { color: var(--text-muted); }
+  .weight-log-item .wl-weight { color: var(--accent); font-weight: 500; }
+  .weight-log-item .wl-diff { font-size: 12px; }
+  .wl-diff.down { color: var(--accent2); }
+  .wl-diff.up { color: var(--red); }
+
+  /* NOTIFICATION */
+  .notif-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 24px; margin-bottom: 20px;
+  }
+  .notif-card h3 { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 1px; color: var(--accent); margin-bottom: 8px; }
+  .notif-card p { font-size: 14px; color: var(--text-muted); margin-bottom: 16px; line-height: 1.6; }
+  .notif-time-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .notif-time-row input[type="time"] {
+    background: var(--surface2); border: 1px solid var(--border);
+    color: var(--text); font-family: 'DM Mono', monospace; font-size: 16px;
+    padding: 10px 14px; border-radius: 8px; outline: none;
+    transition: border-color 0.15s;
+  }
+  .notif-time-row input[type="time"]:focus { border-color: var(--accent); }
+  .notif-status { font-size: 13px; color: var(--text-muted); margin-top: 10px; }
+  .notif-status.granted { color: var(--accent2); }
+  .notif-status.denied { color: var(--red); }
+
+  /* Page headers */
+  .page-header { margin-bottom: 28px; }
+  .page-header .page-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px; letter-spacing: 3px; color: var(--text);
+    line-height: 1;
+  }
+  .page-header .page-sub { font-size: 14px; color: var(--text-muted); margin-top: 6px; }
+
+  /* PROGRESS PAGE */
+  .progress-section { margin-bottom: 32px; }
+  .progress-section h2 {
+    font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 2px;
+    color: var(--accent); margin-bottom: 16px;
+    padding-bottom: 8px; border-bottom: 1px solid var(--border);
+  }
+
+  /* Notification banner */
+  .notify-banner {
+    position: fixed; bottom: 24px; right: 24px; z-index: 200;
+    background: var(--surface2); border: 1px solid var(--accent);
+    border-radius: 12px; padding: 16px 20px; max-width: 300px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    animation: slideUp 0.3s ease; display: none;
+  }
+  .notify-banner.show { display: block; }
+  @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+  .notify-banner-title { font-weight: 700; font-size: 15px; margin-bottom: 4px; color: var(--accent); }
+  .notify-banner-msg { font-size: 13px; color: var(--text-muted); }
+  .notify-close { position: absolute; top: 10px; right: 12px; background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 16px; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  @media (max-width: 640px) {
+    .day-hero { grid-template-columns: 1fr; }
+    .stats-row { grid-template-columns: repeat(3, 1fr); }
+    .nutrition-grid { grid-template-columns: 1fr; }
+    .exercise-card { grid-template-columns: 1fr; }
+    .nav-links button { font-size: 11px; padding: 5px 8px; }
+    .week-row { grid-template-columns: 80px 1fr; }
+    .week-dur { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">IRON<span>PATH</span></div>
+  <div class="nav-links">
+    <button onclick="showPage('today')" class="active" id="nav-today">TODAY</button>
+    <button onclick="showPage('week')" id="nav-week">SCHEDULE</button>
+    <button onclick="showPage('progress')" id="nav-progress">PROGRESS</button>
+    <button onclick="showPage('nutrition')" id="nav-nutrition">NUTRITION</button>
+    <button onclick="showPage('settings')" id="nav-settings">⚙</button>
+  </div>
+  <div class="nav-streak">
+    <span class="streak-fire">🔥</span>
+    <span class="streak-num" id="streakNum">0</span>
+    <span style="color:var(--text-muted); font-size:11px;">DAY STREAK</span>
+  </div>
+</nav>
+
+<!-- TODAY PAGE -->
+<div class="page active" id="page-today">
+  <div class="container">
+    <div class="day-hero">
+      <div>
+        <div class="day-label" id="todayLabel">LOADING...</div>
+        <div class="day-title" id="todayTitle">—</div>
+        <div class="day-subtitle" id="todaySubtitle"></div>
+      </div>
+      <button class="checkin-btn" id="checkinBtn" onclick="toggleCheckin()">
+        <span class="checkin-icon" id="checkinIcon">☐</span>
+        <span class="checkin-label">CHECK IN</span>
+        <span class="checkin-status">✓ DONE</span>
+      </button>
+    </div>
+    <div class="quote-bar" id="quoteBar"></div>
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-val" id="statStreak">0</div>
+        <div class="stat-label">Day Streak 🔥</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" id="statTotal">0</div>
+        <div class="stat-label">Total Workouts</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" id="statWeek">0/5</div>
+        <div class="stat-label">This Week</div>
+      </div>
+    </div>
+    <div id="todayContent"></div>
+  </div>
+</div>
+
+<!-- WEEK PAGE -->
+<div class="page" id="page-week">
+  <div class="container">
+    <div class="page-header">
+      <div class="page-title">WEEKLY SCHEDULE</div>
+      <div class="page-sub">Your 5-day training split. Click any day to see its full workout.</div>
+    </div>
+    <div class="week-grid" id="weekGrid"></div>
+  </div>
+</div>
+
+<!-- PROGRESS PAGE -->
+<div class="page" id="page-progress">
+  <div class="container">
+    <div class="page-header">
+      <div class="page-title">PROGRESS</div>
+      <div class="page-sub">Track your weight, workouts, and momentum.</div>
+    </div>
+
+    <div class="progress-section">
+      <h2>WEIGHT LOG</h2>
+      <div class="weight-input-row">
+        <input type="number" id="weightInput" placeholder="Enter today's weight (lbs)" step="0.1" min="100" max="500">
+        <button class="btn-primary" onclick="logWeight()">LOG IT</button>
+      </div>
+      <div class="chart-wrap">
+        <canvas id="weightChart" height="200"></canvas>
+      </div>
+      <div class="weight-log-list" id="weightLogList"></div>
+    </div>
+
+    <div class="progress-section">
+      <h2>CHECK-IN CALENDAR</h2>
+      <div id="calendarWrap"></div>
+    </div>
+  </div>
+</div>
+
+<!-- NUTRITION PAGE -->
+<div class="page" id="page-nutrition">
+  <div class="container">
+    <div class="page-header">
+      <div class="page-title">NUTRITION</div>
+      <div class="page-sub">Eat to fuel performance and maximize fat loss.</div>
+    </div>
+    <div class="nutrition-grid">
+      <div class="nutrition-card">
+        <div class="big-num">2,500<span class="unit"> cal</span></div>
+        <h3>Daily Calories</h3>
+        <p>Target 2,400–2,600 cal/day to lose 1–1.5 lbs/week. Adjust down slightly if weight loss stalls for 2+ weeks.</p>
+      </div>
+      <div class="nutrition-card">
+        <div class="big-num">190<span class="unit"> g</span></div>
+        <h3>Daily Protein</h3>
+        <p>180–200g protein per day is non-negotiable. This preserves muscle mass as you lose fat. Hit this number every single day.</p>
+      </div>
+      <div class="nutrition-card">
+        <h3>🍗 Best Protein Sources</h3>
+        <p>Chicken breast, 93% ground beef, eggs & egg whites, Greek yogurt, cottage cheese, protein shakes (whey or casein), canned tuna/salmon, turkey breast.</p>
+      </div>
+      <div class="nutrition-card">
+        <h3>🍠 Carb Timing</h3>
+        <p>Eat most of your carbs before and after training. Oats, white rice, sweet potato, fruit, and bread are all fine. Timing > source.</p>
+      </div>
+      <div class="nutrition-card">
+        <h3>💧 Hydration</h3>
+        <p>At least 100 oz of water per day. Your hunger is often thirst. Drink a full glass before each meal. No sugary drinks or juice.</p>
+      </div>
+      <div class="nutrition-card">
+        <h3>🚫 Cut First</h3>
+        <p>Alcohol, soda, juice, energy drinks, fast food more than once a week. These are the biggest hidden calorie traps. Cut them and watch the scale move.</p>
+      </div>
+      <div class="nutrition-card" style="grid-column: 1 / -1;">
+        <h3>📋 Sample Daily Meal Plan</h3>
+        <p style="margin-bottom:10px;"><strong style="color:var(--text)">Breakfast (7am):</strong> 4 scrambled eggs + 1 cup oats + black coffee — ~600 cal, 40g protein</p>
+        <p style="margin-bottom:10px;"><strong style="color:var(--text)">Lunch (12pm):</strong> 8oz chicken breast + 1 cup rice + vegetables — ~550 cal, 60g protein</p>
+        <p style="margin-bottom:10px;"><strong style="color:var(--text)">Pre-Workout Snack (3pm):</strong> Greek yogurt + banana — ~250 cal, 20g protein</p>
+        <p style="margin-bottom:10px;"><strong style="color:var(--text)">Dinner (7pm):</strong> 8oz 93% ground beef + sweet potato + salad — ~650 cal, 55g protein</p>
+        <p><strong style="color:var(--text)">Evening (9pm):</strong> Cottage cheese or casein shake — ~200 cal, 25g protein</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS PAGE -->
+<div class="page" id="page-settings">
+  <div class="container">
+    <div class="page-header">
+      <div class="page-title">SETTINGS</div>
+      <div class="page-sub">Reminders, preferences, and app info.</div>
+    </div>
+
+    <div class="notif-card">
+      <h3>🔔 Workout Reminders</h3>
+      <p>Enable browser notifications and set a daily reminder time. Your browser will send you a nudge even when the app isn't open (as long as you've visited the page recently). Works best on desktop or when added to your phone's home screen.</p>
+      <div class="notif-time-row">
+        <input type="time" id="reminderTime" value="08:00">
+        <button class="btn-primary" onclick="saveReminder()">ENABLE REMINDERS</button>
+        <button class="btn-primary" style="background:var(--surface2); color:var(--text-muted); border:1px solid var(--border);" onclick="testNotification()">TEST</button>
+      </div>
+      <div class="notif-status" id="notifStatus"></div>
+    </div>
+
+    <div class="notif-card">
+      <h3>📱 Add to Home Screen</h3>
+      <p>On iPhone: tap the Share button → "Add to Home Screen."<br>On Android: tap the browser menu → "Add to Home Screen" or "Install App."<br><br>This makes IronPath feel like a native app and keeps it one tap away.</p>
+    </div>
+
+    <div class="notif-card">
+      <h3>🗑️ Reset Data</h3>
+      <p>Clear all check-ins and weight logs. This cannot be undone.</p>
+      <button class="btn-primary" style="background:rgba(255,82,82,0.15); color:var(--red); border:1px solid rgba(255,82,82,0.3); margin-top:10px;" onclick="resetData()">RESET ALL DATA</button>
+    </div>
+
+    <div class="notif-card">
+      <h3>ℹ️ About IronPath</h3>
+      <p>Built for a 295 → 195 lb transformation goal. 5 training days per week using dumbbells, kettlebell, barbell, and adjustable bench. All data is stored locally on your device — nothing is sent anywhere.<br><br>
+      <strong style="color:var(--text)">Program by:</strong> Claude (Anthropic) &nbsp;|&nbsp; <strong style="color:var(--text)">Version:</strong> 1.0</p>
+    </div>
+  </div>
+</div>
+
+<!-- Notification banner -->
+<div class="notify-banner" id="notifyBanner">
+  <button class="notify-close" onclick="closeBanner()">✕</button>
+  <div class="notify-banner-title">💪 Time to Train!</div>
+  <div class="notify-banner-msg" id="bannerMsg">Your workout is waiting. Let's get after it.</div>
+</div>
+
+<script>
+// =========================================================
+// DATA
+// =========================================================
+const WORKOUTS = {
+  0: { // Sunday
+    name: "REST DAY", focus: "Full Rest", type: "rest", duration: "—",
+    desc: "Your body grows during rest, not during training. Sleep, recover, prep your meals for the week.",
+    exercises: []
+  },
+  1: { // Monday
+    name: "MONDAY", focus: "Upper Body Strength", type: "strength", duration: "45–55 min",
+    desc: "Chest, shoulders, back, biceps, triceps. Focus on control and full range of motion.",
+    exercises: [
+      { name: "Dumbbell Bench Press", sets: "3", reps: "10–12", notes: "Controlled down (2 sec), explosive up. Elbows at 45°.", video: "https://www.youtube.com/watch?v=VmB1G1K7v94" },
+      { name: "Dumbbell Bent-Over Row", sets: "3", reps: "10–12 each", notes: "Flat back, pull elbow to hip. Squeeze at top.", video: "https://www.youtube.com/watch?v=pYcpY20QaE8" },
+      { name: "Dumbbell Overhead Press", sets: "3", reps: "10–12", notes: "Seated or standing. Core tight, don't arch back.", video: "https://www.youtube.com/watch?v=qEwKCR5JCog" },
+      { name: "Barbell Bicep Curls", sets: "3", reps: "12–15", notes: "No swinging. Full extension at bottom.", video: "https://www.youtube.com/watch?v=ykJmrZ5v0Oo" },
+      { name: "Tricep Overhead Extension", sets: "3", reps: "12–15", notes: "One heavy DB. Elbows stay tucked in.", video: "https://www.youtube.com/watch?v=nRiJVZDpdL0" },
+      { name: "Dumbbell Lateral Raises", sets: "3", reps: "12–15", notes: "Light weight, slow and controlled. Lead with elbows.", video: "https://www.youtube.com/watch?v=3VcKaXpzqRo" },
+      { name: "Push-Ups", sets: "3", reps: "AMRAP", notes: "Modify on knees if needed. Chest to fist-height from floor.", video: "https://www.youtube.com/watch?v=IODxDxX7oi4" },
+      { name: "Plank Hold", sets: "3", reps: "30–45 sec", notes: "Shoulders over wrists or elbows. Don't let hips sag.", video: "https://www.youtube.com/watch?v=yeKv5oX_6GY" }
+    ]
+  },
+  2: { // Tuesday
+    name: "TUESDAY", focus: "Cardio + Core", type: "cardio", duration: "35–45 min",
+    desc: "Elevate your heart rate and attack your core. Push hard — you should be breathing heavily.",
+    exercises: [
+      { name: "Brisk Walk / Treadmill", sets: "1", reps: "30 min", notes: "Elevated HR cardio. Aim to sustain hard effort throughout.", video: "https://www.youtube.com/watch?v=njeZ29umqVE" },
+      { name: "Lying Knee Raises", sets: "3", reps: "15", notes: "Flat on back, bring knees to chest. Control the lower.", video: "https://www.youtube.com/watch?v=Pr1ieGZ5atk" },
+      { name: "Russian Twists (with DB)", sets: "3", reps: "20 (10 each)", notes: "Sit at 45°, rotate side to side. Hold light dumbbell.", video: "https://www.youtube.com/watch?v=wkD8rjkodUI" },
+      { name: "Dead Bug", sets: "3", reps: "10 each side", notes: "Slow and controlled. Press lower back into floor.", video: "https://www.youtube.com/watch?v=4XLEnwUr1d8" },
+      { name: "Bicycle Crunches", sets: "3", reps: "20", notes: "Slow tempo. Twist fully each side.", video: "https://www.youtube.com/watch?v=9FGilxCbdz8" },
+      { name: "Kettlebell Swings", sets: "4", reps: "20", notes: "Explosive hip drive. NOT a squat — hinge and snap hips.", video: "https://www.youtube.com/watch?v=YSxHifyI6s8" },
+      { name: "Side Plank", sets: "3", reps: "20–30 sec/side", notes: "Stack feet or stagger. Don't let hips drop.", video: "https://www.youtube.com/watch?v=K2KqMX_7gxA" }
+    ]
+  },
+  3: { // Wednesday
+    name: "WEDNESDAY", focus: "Lower Body Strength", type: "strength", duration: "45–55 min",
+    desc: "Your biggest muscles — quads, hamstrings, glutes. Hardest day but biggest calorie burn.",
+    exercises: [
+      { name: "Barbell Back Squat", sets: "4", reps: "8–10", notes: "Bar on traps, chest up, knees track toes. Go to parallel.", video: "https://www.youtube.com/watch?v=bEv6CCg2BC8" },
+      { name: "Romanian Deadlift", sets: "3", reps: "10–12", notes: "Hinge at hips, soft knee. Feel the hamstring stretch.", video: "https://www.youtube.com/watch?v=JCXUYuzwNrM" },
+      { name: "Dumbbell Walking Lunges", sets: "3", reps: "12 each leg", notes: "Long stride, back knee taps floor lightly.", video: "https://www.youtube.com/watch?v=L8fvypPrzzs" },
+      { name: "Goblet Squat (Kettlebell)", sets: "3", reps: "12–15", notes: "KB held at chest. Great for depth — sit into it.", video: "https://www.youtube.com/watch?v=MxsFDhcyFyE" },
+      { name: "Dumbbell Sumo Squat", sets: "3", reps: "12–15", notes: "Wide stance, toes out. Targets inner thigh and glutes.", video: "https://www.youtube.com/watch?v=9-ZNy8LDNyQ" },
+      { name: "Single-Leg Calf Raise", sets: "3", reps: "15 each", notes: "Use bench or step for full range. Slow up and down.", video: "https://www.youtube.com/watch?v=c5Kv6-fnTj8" },
+      { name: "Glute Bridge", sets: "3", reps: "15–20", notes: "Drive hips up and squeeze glutes at top. Add DB on hips.", video: "https://www.youtube.com/watch?v=wPM8icPu6H8" },
+      { name: "Wall Sit", sets: "3", reps: "30–45 sec", notes: "Thighs parallel to floor.", video: "https://www.youtube.com/watch?v=y-wV4Venusw" }
+    ]
+  },
+  4: { // Thursday
+    name: "THURSDAY", focus: "Active Recovery", type: "recovery", duration: "30–40 min",
+    desc: "Move without taxing muscles. Improves recovery, reduces soreness, keeps you on track.",
+    exercises: [
+      { name: "Light Walk", sets: "1", reps: "20–30 min", notes: "Outside if possible. Conversational pace — this is not a workout.", video: "https://www.youtube.com/watch?v=njeZ29umqVE" },
+      { name: "Hip Flexor Stretch", sets: "1", reps: "60 sec/side", notes: "Kneeling lunge position. Lean forward, feel the stretch.", video: "https://www.youtube.com/watch?v=YqF8BnBKkCE" },
+      { name: "Cat-Cow", sets: "1", reps: "10 slow reps", notes: "On hands and knees — arch and round spine slowly.", video: "https://www.youtube.com/watch?v=kqnua4rHVVA" },
+      { name: "Child's Pose", sets: "1", reps: "60–90 sec", notes: "Stretch lats and lower back. Breathe into the stretch.", video: "https://www.youtube.com/watch?v=2MJGg-dUKh0" },
+      { name: "Doorway Pec Stretch", sets: "1", reps: "60 sec/side", notes: "Great for undoing bench press tightness.", video: "https://www.youtube.com/results?search_query=doorway+pec+stretch" },
+      { name: "Pigeon Pose / Figure-4", sets: "1", reps: "90 sec/side", notes: "Deep glute and hip stretch. Critical at higher body weights.", video: "https://www.youtube.com/watch?v=oF_1gh6C5q0" },
+      { name: "Thoracic Spine Rotation", sets: "1", reps: "10 each side", notes: "Seated or on floor. Improves shoulder and back mobility.", video: "https://www.youtube.com/watch?v=RQS9mc0JOaI" }
+    ]
+  },
+  5: { // Friday
+    name: "FRIDAY", focus: "Full Body Power", type: "strength", duration: "50–60 min",
+    desc: "Compound movements, full body. Your most demanding and most rewarding session of the week.",
+    exercises: [
+      { name: "Deadlift (Barbell)", sets: "4", reps: "6–8", notes: "Flat back, drive through heels, squeeze glutes at top.", video: "https://www.youtube.com/watch?v=op9kVnSso6Q" },
+      { name: "Chest-Supported DB Row", sets: "3", reps: "10–12", notes: "Face down on incline bench, row both DBs up simultaneously.", video: "https://www.youtube.com/watch?v=GZbfZ033f74" },
+      { name: "Kettlebell Swing", sets: "4", reps: "15–20", notes: "Explosive hip drive. Hinge and snap hips forward.", video: "https://www.youtube.com/watch?v=YSxHifyI6s8" },
+      { name: "Arnold Press", sets: "3", reps: "10–12", notes: "Rotating shoulder press. Start palms in, end palms out.", video: "https://www.youtube.com/watch?v=6Z15_WdXmVw" },
+      { name: "DB Floor Press", sets: "3", reps: "10–12", notes: "Like bench but on the floor — protects the shoulder joint.", video: "https://www.youtube.com/watch?v=uUGDRwge4F8" },
+      { name: "Renegade Row", sets: "3", reps: "8 each side", notes: "In push-up position, row one DB at a time. Keep hips square.", video: "https://www.youtube.com/watch?v=oFBDvnGAHhU" },
+      { name: "Burpees (modify ok)", sets: "3", reps: "8–12", notes: "Step back/forward if needed. Every rep builds fitness.", video: "https://www.youtube.com/watch?v=TU8QYVW0gDU" },
+      { name: "Farmer's Carry", sets: "3", reps: "40 steps", notes: "Pick up heavy DBs and walk. Works grip, core, and traps.", video: "https://www.youtube.com/watch?v=Fkzk_RqlYig" }
+    ]
+  },
+  6: { // Saturday
+    name: "SATURDAY", focus: "HIIT Cardio", type: "cardio", duration: "30–40 min",
+    desc: "High intensity intervals. Burns fat for hours after you finish. Go hard — you rest Sunday.",
+    exercises: [
+      { name: "Kettlebell Swings", sets: "4 rounds", reps: "30 sec on / 15 sec off", notes: "Explosive. Every rep counts. HR should be spiking.", video: "https://www.youtube.com/watch?v=YSxHifyI6s8" },
+      { name: "Push-Up Variations", sets: "4 rounds", reps: "30 sec on / 15 sec off", notes: "Wide, narrow, or standard. AMRAP.", video: "https://www.youtube.com/watch?v=IODxDxX7oi4" },
+      { name: "Squat Jumps / Air Squats", sets: "4 rounds", reps: "30 sec on / 15 sec off", notes: "Modify to air squats if joints are sore.", video: "https://www.youtube.com/watch?v=A-cFYWvaHr0" },
+      { name: "Dumbbell High Pulls", sets: "4 rounds", reps: "30 sec on / 15 sec off", notes: "Row DBs from hip to chin explosively.", video: "https://www.youtube.com/watch?v=uMsz5tX_RAo" },
+      { name: "Mountain Climbers", sets: "4 rounds", reps: "30 sec on / 15 sec off", notes: "Drive knees to chest alternately. Keep hips down.", video: "https://www.youtube.com/watch?v=nmwgirgXLYM" },
+      { name: "Dumbbell Thrusters", sets: "4 rounds", reps: "30 sec on / 15 sec off", notes: "Squat + overhead press in one fluid movement.", video: "https://www.youtube.com/watch?v=L219ltL15zk" }
+    ]
+  }
+};
+
+const QUOTES = [
+  "You don't have to be great to start, but you have to start to be great.",
+  "The only bad workout is the one that didn't happen.",
+  "Discipline is choosing between what you want now and what you want most.",
+  "Progress, not perfection. Every rep counts.",
+  "The pain you feel today will be the strength you feel tomorrow.",
+  "100 lbs doesn't come off in a week. It comes off one day at a time.",
+  "You already decided to change. Now prove it.",
+  "Show up. That's 90% of the battle.",
+  "The body achieves what the mind believes.",
+  "You're one workout away from a good mood.",
+  "Hard days build the strongest people.",
+  "Don't wish it were easier — wish you were stronger.",
+  "Every day you don't quit is a day you win.",
+  "Your future self is counting on you today.",
+];
+
+// =========================================================
+// STATE & STORAGE
+// =========================================================
+function getData(key, def) {
+  try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : def; }
+  catch(e) { return def; }
+}
+function setData(key, val) {
+  try { localStorage.setItem(key, JSON.stringify(val)); } catch(e) {}
+}
+
+function getCheckins() { return getData('ironpath_checkins', {}); }
+function setCheckins(c) { setData('ironpath_checkins', c); }
+function getWeightLog() { return getData('ironpath_weights', []); }
+function setWeightLog(w) { setData('ironpath_weights', w); }
+
+function todayKey() {
+  const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function calcStreak() {
+  const checkins = getCheckins();
+  let streak = 0;
+  const d = new Date();
+  // If not checked in today, start from yesterday
+  const todayK = todayKey();
+  const todayDow = d.getDay();
+  const todayChecked = checkins[todayK];
+  // Walk back from today checking active training days
+  const trainingDays = [1,2,3,4,5,6]; // Mon-Sat
+  let checkDate = new Date(d);
+  if (!todayChecked) checkDate.setDate(checkDate.getDate() - 1);
+  for (let i = 0; i < 90; i++) {
+    const dow = checkDate.getDay();
+    const key = `${checkDate.getFullYear()}-${String(checkDate.getMonth()+1).padStart(2,'0')}-${String(checkDate.getDate()).padStart(2,'0')}`;
+    if (trainingDays.includes(dow)) {
+      if (checkins[key]) { streak++; }
+      else { break; }
+    }
+    checkDate.setDate(checkDate.getDate() - 1);
+  }
+  if (todayChecked && trainingDays.includes(todayDow)) streak; // already counted
+  return streak;
+}
+
+function calcTotalWorkouts() {
+  const checkins = getCheckins();
+  return Object.values(checkins).filter(v => v).length;
+}
+
+function calcThisWeek() {
+  const checkins = getCheckins();
+  const d = new Date();
+  const startOfWeek = new Date(d);
+  startOfWeek.setDate(d.getDate() - d.getDay() + 1); // Monday
+  let count = 0;
+  for (let i = 0; i < 6; i++) {
+    const dd = new Date(startOfWeek); dd.setDate(startOfWeek.getDate() + i);
+    const key = `${dd.getFullYear()}-${String(dd.getMonth()+1).padStart(2,'0')}-${String(dd.getDate()).padStart(2,'0')}`;
+    if (checkins[key]) count++;
+  }
+  return count;
+}
+
+// =========================================================
+// RENDER TODAY
+// =========================================================
+function renderToday() {
+  const now = new Date();
+  const dow = now.getDay();
+  const workout = WORKOUTS[dow];
+  const checkins = getCheckins();
+  const todayChecked = checkins[todayKey()];
+  const streak = calcStreak();
+  const total = calcTotalWorkouts();
+  const weekCount = calcThisWeek();
+
+  // Nav streak
+  document.getElementById('streakNum').textContent = streak;
+  document.getElementById('statStreak').textContent = streak;
+  document.getElementById('statTotal').textContent = total;
+  document.getElementById('statWeek').textContent = weekCount + '/5';
+
+  // Hero
+  const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  document.getElementById('todayLabel').textContent = days[dow].toUpperCase() + ' — ' + now.toLocaleDateString('en-US', {month:'long', day:'numeric', year:'numeric'});
+  document.getElementById('todayTitle').innerHTML = workout.name.split(' ').map((w,i) => i===workout.name.split(' ').length-1 ? `<span>${w}</span>` : w + ' ').join('');
+  document.getElementById('todaySubtitle').textContent = workout.focus + (workout.duration !== '—' ? ' · ' + workout.duration : '');
+
+  // Check-in button
+  const btn = document.getElementById('checkinBtn');
+  const icon = document.getElementById('checkinIcon');
+  if (todayChecked) {
+    btn.classList.add('checked');
+    icon.textContent = '✅';
+  } else {
+    btn.classList.remove('checked');
+    icon.textContent = dow === 0 ? '😴' : '☐';
+  }
+
+  // Quote
+  const q = QUOTES[now.getDate() % QUOTES.length];
+  document.getElementById('quoteBar').textContent = '"' + q + '"';
+
+  // Content
+  const content = document.getElementById('todayContent');
+  if (workout.type === 'rest') {
+    content.innerHTML = `
+      <div class="rest-card">
+        <div class="rest-icon">😴</div>
+        <div class="rest-title">REST & RECOVER</div>
+        <p class="rest-msg">${workout.desc}</p>
+        <p class="rest-msg" style="margin-top:16px; color:var(--accent)">Your muscles grow while you rest. This day is part of the program.</p>
+      </div>`;
+    return;
+  }
+
+  const badgeClass = workout.type === 'strength' ? 'badge-strength' : workout.type === 'cardio' ? 'badge-cardio' : 'badge-recovery';
+  const badgeLabel = workout.type === 'strength' ? '⚡ Strength' : workout.type === 'cardio' ? '🔥 Cardio' : '🌿 Active Recovery';
+
+  let html = `<span class="type-badge ${badgeClass}">${badgeLabel}</span>`;
+  html += `<p style="color:var(--text-muted); font-size:14px; margin-bottom:20px; line-height:1.6;">${workout.desc}</p>`;
+  html += `<div class="section-header">EXERCISES</div><div class="exercise-grid">`;
+
+  workout.exercises.forEach(ex => {
+    html += `<div class="exercise-card">
+      <div>
+        <div class="ex-name">${ex.name}</div>
+        <div class="ex-meta"><strong>${ex.sets}</strong> sets × <strong>${ex.reps}</strong></div>
+        <div class="ex-notes">${ex.notes}</div>
+      </div>
+      <a href="${ex.video}" target="_blank" class="ex-video">▶ HOW TO</a>
+    </div>`;
+  });
+
+  html += `</div>`;
+  if (workout.type === 'strength' || workout.type === 'cardio') {
+    html += `<div style="margin-top:20px; padding:14px 18px; background:var(--surface); border:1px solid var(--border); border-radius:10px; font-size:13px; color:var(--text-muted);">
+      <strong style="color:var(--text)">⚠️ Remember:</strong> Warm up 5 min (arm circles, leg swings, 10 bodyweight squats). Rest 60–90 sec between sets. Cool down 5 min with static stretching.
+    </div>`;
+  }
+  content.innerHTML = html;
+}
+
+// =========================================================
+// CHECK-IN
+// =========================================================
+function toggleCheckin() {
+  const checkins = getCheckins();
+  const key = todayKey();
+  if (checkins[key]) {
+    delete checkins[key];
+  } else {
+    checkins[key] = true;
+    const streak = calcStreak();
+    if (streak > 0) showBanner(`You checked in! 🔥 ${streak}-day streak.`);
+  }
+  setCheckins(checkins);
+  renderToday();
+}
+
+// =========================================================
+// WEEK PAGE
+// =========================================================
+function renderWeek() {
+  const days = [
+    { dow: 1, name: 'Monday', focus: 'Upper Body Strength', desc: 'Chest, shoulders, back, biceps, triceps', dur: '45–55 min', type: 'strength' },
+    { dow: 2, name: 'Tuesday', focus: 'Cardio + Core', desc: 'Elevated HR cardio + core circuit', dur: '35–45 min', type: 'cardio' },
+    { dow: 3, name: 'Wednesday', focus: 'Lower Body Strength', desc: 'Squats, deadlifts, lunges, glutes', dur: '45–55 min', type: 'strength' },
+    { dow: 4, name: 'Thursday', focus: 'Active Recovery', desc: 'Walk, stretch, mobility work', dur: '30–40 min', type: 'recovery' },
+    { dow: 5, name: 'Friday', focus: 'Full Body Power', desc: 'Compound lifts, KB swings, carries', dur: '50–60 min', type: 'strength' },
+    { dow: 6, name: 'Saturday', focus: 'HIIT Cardio', desc: '6-exercise interval circuit, 4 rounds', dur: '30–40 min', type: 'cardio' },
+    { dow: 0, name: 'Sunday', focus: 'Full Rest', desc: 'Sleep, recover, prep meals', dur: '—', type: 'rest' },
+  ];
+  const todayDow = new Date().getDay();
+  let html = '';
+  days.forEach(d => {
+    const color = d.type === 'strength' ? 'var(--blue)' : d.type === 'cardio' ? 'var(--orange)' : d.type === 'recovery' ? 'var(--purple)' : 'var(--text-muted)';
+    const isToday = d.dow === todayDow;
+    html += `<div class="week-row" style="${isToday ? 'border-color:var(--accent);' : ''}" onclick="showPage('today')">
+      <div class="week-day-name" style="color:${color}">${d.name.toUpperCase()}</div>
+      <div class="week-focus">
+        <div class="week-focus-name">${d.focus}</div>
+        <div class="week-focus-desc">${d.desc}</div>
+      </div>
+      <div class="week-dur">${d.dur}</div>
+    </div>`;
+  });
+  document.getElementById('weekGrid').innerHTML = html;
+}
+
+// =========================================================
+// CALENDAR
+// =========================================================
+function renderCalendar() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth();
+  const checkins = getCheckins();
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+  let html = `<div style="font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:2px; color:var(--text); margin-bottom:12px;">${monthNames[month]} ${year}</div>`;
+  html += `<div class="cal-grid">`;
+  dayNames.forEach(d => html += `<div class="cal-day-header">${d}</div>`);
+  for (let i = 0; i < firstDay; i++) html += `<div class="cal-day empty"></div>`;
+  for (let d = 1; d <= daysInMonth; d++) {
+    const key = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isToday = d === now.getDate();
+    const isChecked = checkins[key];
+    let cls = 'cal-day';
+    if (isChecked) cls += ' checked';
+    if (isToday) cls += ' today';
+    html += `<div class="${cls}">${d}${isChecked ? '<span class="checkmark">✓</span>' : ''}</div>`;
+  }
+  html += `</div>`;
+  document.getElementById('calendarWrap').innerHTML = html;
+}
+
+// =========================================================
+// WEIGHT LOG
+// =========================================================
+function logWeight() {
+  const val = parseFloat(document.getElementById('weightInput').value);
+  if (!val || val < 50 || val > 600) { alert('Please enter a valid weight.'); return; }
+  const log = getWeightLog();
+  log.push({ date: todayKey(), weight: val, ts: Date.now() });
+  setWeightLog(log);
+  document.getElementById('weightInput').value = '';
+  renderWeightLog();
+}
+
+function renderWeightLog() {
+  const log = getWeightLog().slice().reverse();
+  const listEl = document.getElementById('weightLogList');
+  if (!log.length) {
+    listEl.innerHTML = `<div style="color:var(--text-muted); font-size:14px; padding:20px; text-align:center;">No weight entries yet. Log your starting weight above.</div>`;
+    renderWeightChart([]);
+    return;
+  }
+  let html = '';
+  log.forEach((entry, i) => {
+    const prev = log[i+1];
+    let diffHtml = '';
+    if (prev) {
+      const diff = entry.weight - prev.weight;
+      const sign = diff > 0 ? '+' : '';
+      const cls = diff < 0 ? 'down' : diff > 0 ? 'up' : '';
+      diffHtml = `<span class="wl-diff ${cls}">${sign}${diff.toFixed(1)} lbs</span>`;
+    }
+    html += `<div class="weight-log-item">
+      <span class="wl-date">${entry.date}</span>
+      <span class="wl-weight">${entry.weight} lbs</span>
+      ${diffHtml}
+    </div>`;
+  });
+  listEl.innerHTML = html;
+  renderWeightChart(log.slice().reverse());
+}
+
+function renderWeightChart(log) {
+  const canvas = document.getElementById('weightChart');
+  const ctx = canvas.getContext('2d');
+  canvas.width = canvas.offsetWidth || 800;
+  canvas.height = 200;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  if (log.length < 2) {
+    ctx.fillStyle = '#7a8a7d';
+    ctx.font = '14px DM Sans';
+    ctx.textAlign = 'center';
+    ctx.fillText('Log at least 2 weights to see your chart', canvas.width/2, 100);
+    return;
+  }
+  const weights = log.map(l => l.weight);
+  const dates = log.map(l => l.date.slice(5));
+  const min = Math.min(...weights) - 5;
+  const max = Math.max(...weights) + 5;
+  const pw = canvas.width; const ph = canvas.height;
+  const pad = { t: 20, r: 20, b: 36, l: 50 };
+  const gw = pw - pad.l - pad.r; const gh = ph - pad.t - pad.b;
+
+  // Grid lines
+  ctx.strokeStyle = '#2a2e2b'; ctx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) {
+    const y = pad.t + (gh / 4) * i;
+    ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(pad.l + gw, y); ctx.stroke();
+    const val = max - ((max - min) / 4) * i;
+    ctx.fillStyle = '#7a8a7d'; ctx.font = '11px DM Mono'; ctx.textAlign = 'right';
+    ctx.fillText(val.toFixed(0), pad.l - 6, y + 4);
+  }
+
+  // Goal line at 195
+  if (min <= 195 && max >= 195) {
+    const gy = pad.t + gh * (1 - (195 - min) / (max - min));
+    ctx.strokeStyle = 'rgba(181,242,61,0.3)'; ctx.lineWidth = 1;
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath(); ctx.moveTo(pad.l, gy); ctx.lineTo(pad.l + gw, gy); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = 'rgba(181,242,61,0.6)'; ctx.font = '11px DM Mono'; ctx.textAlign = 'left';
+    ctx.fillText('GOAL: 195', pad.l + 4, gy - 4);
+  }
+
+  // Line
+  ctx.beginPath();
+  const grad = ctx.createLinearGradient(pad.l, 0, pad.l + gw, 0);
+  grad.addColorStop(0, '#b5f23d'); grad.addColorStop(1, '#5dfc8d');
+  ctx.strokeStyle = grad; ctx.lineWidth = 2.5; ctx.lineJoin = 'round';
+  weights.forEach((w, i) => {
+    const x = pad.l + (gw / (weights.length - 1)) * i;
+    const y = pad.t + gh * (1 - (w - min) / (max - min));
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  });
+  ctx.stroke();
+
+  // Dots
+  weights.forEach((w, i) => {
+    const x = pad.l + (gw / (weights.length - 1)) * i;
+    const y = pad.t + gh * (1 - (w - min) / (max - min));
+    ctx.beginPath(); ctx.arc(x, y, 4, 0, Math.PI*2);
+    ctx.fillStyle = '#b5f23d'; ctx.fill();
+    ctx.strokeStyle = '#0e0f0e'; ctx.lineWidth = 1.5; ctx.stroke();
+  });
+
+  // X labels (show every nth)
+  const step = Math.ceil(dates.length / 7);
+  dates.forEach((d, i) => {
+    if (i % step !== 0 && i !== dates.length - 1) return;
+    const x = pad.l + (gw / (dates.length - 1)) * i;
+    ctx.fillStyle = '#7a8a7d'; ctx.font = '10px DM Mono'; ctx.textAlign = 'center';
+    ctx.fillText(d, x, ph - 6);
+  });
+}
+
+// =========================================================
+// NOTIFICATIONS
+// =========================================================
+let reminderInterval = null;
+
+function saveReminder() {
+  const time = document.getElementById('reminderTime').value;
+  if (!time) return;
+  setData('ironpath_reminder_time', time);
+  requestNotifPermission(time);
+}
+
+function requestNotifPermission(time) {
+  const status = document.getElementById('notifStatus');
+  if (!('Notification' in window)) {
+    status.textContent = '⚠️ Your browser does not support notifications. Try Chrome or Edge on desktop.';
+    status.className = 'notif-status denied';
+    return;
+  }
+  Notification.requestPermission().then(perm => {
+    if (perm === 'granted') {
+      status.textContent = `✅ Reminders enabled! You'll be notified at ${time} each day. Keep the tab open or add to home screen for best results.`;
+      status.className = 'notif-status granted';
+      scheduleReminder(time);
+    } else {
+      status.textContent = '❌ Notifications were blocked. Allow notifications in your browser settings for this site.';
+      status.className = 'notif-status denied';
+    }
+  });
+}
+
+function scheduleReminder(time) {
+  if (reminderInterval) clearInterval(reminderInterval);
+  reminderInterval = setInterval(() => {
+    const now = new Date();
+    const hhmm = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+    if (hhmm === time) {
+      const dow = now.getDay();
+      const workout = WORKOUTS[dow];
+      if (dow !== 0 && Notification.permission === 'granted') {
+        new Notification('💪 IronPath — Time to Train!', {
+          body: `Today: ${workout.focus}. Let's get after it.`,
+          icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">💪</text></svg>'
+        });
+      }
+    }
+  }, 30000); // Check every 30 sec
+}
+
+function testNotification() {
+  if (Notification.permission === 'granted') {
+    const dow = new Date().getDay();
+    const workout = WORKOUTS[dow];
+    new Notification('💪 IronPath — Test Reminder', {
+      body: dow === 0 ? 'Rest day today! Recover well.' : `Today: ${workout.focus}. Time to grind.`,
+    });
+    document.getElementById('notifStatus').textContent = '✅ Test notification sent!';
+    document.getElementById('notifStatus').className = 'notif-status granted';
+  } else {
+    document.getElementById('notifStatus').textContent = '⚠️ Enable reminders first.';
+    document.getElementById('notifStatus').className = 'notif-status denied';
+  }
+}
+
+// =========================================================
+// BANNER
+// =========================================================
+function showBanner(msg) {
+  document.getElementById('bannerMsg').textContent = msg;
+  const banner = document.getElementById('notifyBanner');
+  banner.classList.add('show');
+  setTimeout(() => banner.classList.remove('show'), 5000);
+}
+function closeBanner() { document.getElementById('notifyBanner').classList.remove('show'); }
+
+// =========================================================
+// NAVIGATION
+// =========================================================
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-links button').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  document.getElementById('nav-' + id)?.classList.add('active');
+  if (id === 'progress') { renderCalendar(); renderWeightLog(); }
+  if (id === 'week') renderWeek();
+}
+
+// =========================================================
+// RESET
+// =========================================================
+function resetData() {
+  if (confirm('This will erase all your check-ins and weight logs. Are you sure?')) {
+    localStorage.removeItem('ironpath_checkins');
+    localStorage.removeItem('ironpath_weights');
+    renderToday();
+    alert('All data cleared.');
+  }
+}
+
+// =========================================================
+// INIT
+// =========================================================
+window.addEventListener('load', () => {
+  renderToday();
+  // Resume reminder if set
+  const savedTime = getData('ironpath_reminder_time', null);
+  if (savedTime && Notification.permission === 'granted') {
+    document.getElementById('reminderTime').value = savedTime;
+    scheduleReminder(savedTime);
+  }
+  // Show welcome banner first visit
+  if (!getData('ironpath_visited', false)) {
+    setData('ironpath_visited', true);
+    setTimeout(() => showBanner("Welcome to IronPath! Check in after each workout to build your streak. 💪"), 1500);
+  }
+});
+window.addEventListener('resize', () => { if (document.getElementById('page-progress').classList.contains('active')) renderWeightLog(); });
+</script>
+</body>
+</html>
