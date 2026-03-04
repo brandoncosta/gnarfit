@@ -8,23 +8,35 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cinzel+Decorative:wght@400;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0d0b0e;
-    --surface: #13111a;
-    --surface2: #1c1825;
-    --border: #2e2840;
+    /* Page / global - deep walnut/leather */
+    --bg: #18110a;
+    --surface: #221608;
+    --surface2: #2a1e0e;
+    --border: #3d2e18;
+
+    /* PHB parchment cards - cream on dark */
+    --card-bg: #ede0c0;
+    --card-bg2: #e4d4a8;
+    --card-border: #7a5c18;
+    --card-text: #1c1108;
+    --card-text-muted: #5a4020;
+    --card-rule: rgba(122,92,24,0.25);
+
+    /* Global accents */
     --accent: #c9a84c;
-    --accent2: #e8c96a;
-    --accent-dim: rgba(201,168,76,0.12);
-    --text: #e8e0d0;
-    --text-muted: #7a6e8a;
-    --red: #c0392b;
-    --orange: #d4811a;
-    --blue: #4a90a4;
-    --purple: #8b5e9e;
+    --accent2: #e0bb5a;
+    --accent-dim: rgba(201,168,76,0.15);
+    --red: #7a1010;
+    --red-bright: #b03030;
     --gold: #c9a84c;
     --crimson: #8b1a1a;
-    --parchment: #d4c5a0;
-    --stone: #4a4560;
+    --crimson-mid: #b02828;
+    --parchment: #ede0c0;
+    --ink: #1c1108;
+
+    /* Global text */
+    --text: #e4d4a8;
+    --text-muted: #8a7040;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
@@ -32,32 +44,26 @@
     background: var(--bg);
     color: var(--text);
     font-family: 'Crimson Text', Georgia, serif;
-    font-size: 16px;
+    font-size: 17px;
     min-height: 100vh;
     overflow-x: hidden;
   }
 
-  /* RPG atmospheric bg */
+  /* Warm dark leather bg */
   body::before {
     content: '';
     position: fixed; inset: 0;
     background: 
-      radial-gradient(ellipse at 15% 10%, rgba(139,26,26,0.08) 0%, transparent 50%),
-      radial-gradient(ellipse at 85% 90%, rgba(74,68,96,0.12) 0%, transparent 50%),
-      radial-gradient(ellipse at 50% 50%, rgba(201,168,76,0.03) 0%, transparent 70%);
+      radial-gradient(ellipse at 20% 0%, rgba(139,60,20,0.12) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 100%, rgba(100,60,10,0.10) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 50%, rgba(201,168,76,0.04) 0%, transparent 70%);
     pointer-events: none; z-index: 0;
-  }
-  body::after {
-    content: '';
-    position: fixed; inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-    pointer-events: none; z-index: 0; opacity: 0.4;
   }
 
   /* NAV */
   nav {
     position: sticky; top: 0; z-index: 200;
-    background: rgba(13,11,14,0.97);
+    background: rgba(24,17,10,0.98);
     backdrop-filter: blur(20px);
     border-bottom: 1px solid var(--border);
     padding: 0 16px;
@@ -69,7 +75,7 @@
     content: '';
     position: absolute; bottom: 0; left: 0; right: 0; height: 1px;
     background: linear-gradient(90deg, transparent, var(--accent), transparent);
-    opacity: 0.4;
+    opacity: 0.5;
   }
   .nav-logo {
     font-family: 'Cinzel Decorative', serif;
@@ -95,7 +101,7 @@
   }
   .hamburger span {
     display: block; width: 22px; height: 2px;
-    background: var(--text); border-radius: 2px;
+    background: var(--accent); border-radius: 1px;
     transition: all 0.25s ease;
   }
   .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
@@ -113,7 +119,7 @@
   /* Drawer */
   .menu-drawer {
     position: fixed; top: 0; left: -290px; width: 270px; height: 100%;
-    background: linear-gradient(180deg, #13111a 0%, #0f0d15 100%);
+    background: linear-gradient(180deg, #1e1408 0%, #161008 100%);
     border-right: 1px solid var(--border);
     box-shadow: 4px 0 30px rgba(0,0,0,0.6);
     z-index: 300; transition: left 0.3s cubic-bezier(0.4,0,0.2,1);
@@ -156,9 +162,9 @@
     width: 2px; background: var(--accent);
     transform: scaleY(0); transition: transform 0.2s;
   }
-  .menu-item:hover { color: var(--accent); background: var(--accent-dim); }
+  .menu-item:hover { color: var(--accent); background: rgba(201,168,76,0.1); }
   .menu-item:hover::before { transform: scaleY(1); }
-  .menu-item.active { color: var(--accent); background: var(--accent-dim); }
+  .menu-item.active { color: var(--accent); background: rgba(201,168,76,0.1); }
   .menu-item.active::before { transform: scaleY(1); }
   .menu-icon { font-size: 16px; width: 22px; text-align: center; opacity: 0.8; }
 
@@ -185,48 +191,43 @@
     font-weight: 700;
     line-height: 1; letter-spacing: 1px;
     color: var(--text);
-    text-shadow: 0 0 40px rgba(201,168,76,0.15);
+    text-shadow: 0 0 30px rgba(201,168,76,0.2);
   }
   .day-title span { color: var(--accent); }
   .day-subtitle {
-    font-size: 16px; color: var(--text-muted);
+    font-size: 17px; color: var(--text);
     margin-top: 10px; font-style: italic;
     font-family: 'Crimson Text', serif;
+    opacity: 0.8;
   }
   .checkin-btn {
     display: flex; flex-direction: column; align-items: center;
-    gap: 6px; padding: 20px 28px; border-radius: 4px;
-    border: 1px solid var(--border); 
-    background: linear-gradient(135deg, var(--surface) 0%, #0f0d15 100%);
+    gap: 6px; padding: 20px 28px; border-radius: 2px;
+    border: 1px solid var(--card-border);
+    border-top: 3px solid var(--crimson);
+    background: linear-gradient(180deg, var(--card-bg) 0%, var(--card-bg2) 100%);
     cursor: pointer; transition: all 0.2s; min-width: 120px;
     font-family: 'Cinzel', serif;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-    position: relative; overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.5);
   }
-  .checkin-btn::before {
-    content: ''; position: absolute; inset: 0;
-    background: linear-gradient(135deg, rgba(201,168,76,0.08), transparent);
-    opacity: 0; transition: opacity 0.2s;
-  }
-  .checkin-btn:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(201,168,76,0.2); }
-  .checkin-btn:hover::before { opacity: 1; }
-  .checkin-btn.checked { background: var(--accent-dim); border-color: var(--accent); }
+  .checkin-btn:hover { border-color: var(--crimson-mid); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.6); }
+  .checkin-btn.checked { background: linear-gradient(180deg, #dde8c8 0%, #cdd8b0 100%); border-color: #5a7830; border-top-color: #3a5810; }
   .checkin-icon { font-size: 36px; }
-  .checkin-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); font-weight: 400; font-family: 'Cinzel', serif; }
-  .checkin-status { font-size: 13px; font-weight: 600; color: var(--accent); display: none; }
+  .checkin-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--card-text-muted); font-weight: 600; font-family: 'Cinzel', serif; }
+  .checkin-status { font-size: 12px; font-weight: 700; color: #3a5810; display: none; font-family: 'Cinzel', serif; letter-spacing: 1px; }
   .checkin-btn.checked .checkin-status { display: block; }
   .checkin-btn.checked .checkin-label { display: none; }
 
   /* Quote bar */
   .quote-bar {
-    background: rgba(201,168,76,0.05);
-    border: 1px solid rgba(201,168,76,0.2);
-    border-left: 3px solid var(--accent);
+    background: linear-gradient(180deg, var(--card-bg) 0%, var(--card-bg2) 100%);
+    border: 1px solid var(--card-border);
+    border-left: 4px solid var(--crimson);
     border-radius: 2px; padding: 14px 20px;
     margin-bottom: 28px;
-    font-size: 15px; color: var(--parchment); font-style: italic;
+    font-size: 16px; color: var(--card-text); font-style: italic;
     font-family: 'Crimson Text', serif;
-    opacity: 0.85;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.4);
   }
 
   /* TYPE BADGE */
@@ -237,17 +238,18 @@
     text-transform: uppercase; margin-bottom: 24px;
     font-family: 'Cinzel', serif;
   }
-  .badge-strength { background: rgba(139,26,26,0.2); color: #c97a7a; border: 1px solid rgba(139,26,26,0.4); }
-  .badge-cardio { background: rgba(212,129,26,0.15); color: #d4a56a; border: 1px solid rgba(212,129,26,0.3); }
-  .badge-recovery { background: rgba(139,94,158,0.15); color: #b08ec0; border: 1px solid rgba(139,94,158,0.3); }
-  .badge-rest { background: rgba(122,138,125,0.12); color: var(--text-muted); border: 1px solid var(--border); }
+  .badge-strength { background: rgba(122,16,16,0.12); color: var(--crimson); border: 1px solid rgba(122,16,16,0.4); font-weight: 700; }
+  .badge-cardio { background: rgba(139,80,10,0.15); color: #7a4a08; border: 1px solid rgba(139,80,10,0.4); font-weight: 700; }
+  .badge-recovery { background: rgba(60,80,40,0.2); color: #3a5820; border: 1px solid rgba(60,80,40,0.4); font-weight: 700; }
+  .badge-rest { background: rgba(80,60,30,0.15); color: var(--card-text-muted); border: 1px solid var(--card-border); font-weight: 700; }
 
   /* EXERCISE TABLE */
   .section-header {
     font-family: 'Cinzel', serif;
-    font-size: 14px; font-weight: 600; letter-spacing: 3px; color: var(--accent);
+    font-size: 13px; font-weight: 700; letter-spacing: 3px; color: var(--accent);
     margin: 28px 0 14px; display: flex; align-items: center; gap: 12px;
     text-transform: uppercase;
+    text-shadow: 0 0 12px rgba(201,168,76,0.3);
   }
   .section-header::before {
     content: '⚔'; font-size: 12px; opacity: 0.6;
@@ -258,10 +260,11 @@
   }
   .exercise-grid { display: flex; flex-direction: column; gap: 8px; }
   .exercise-card {
-    background: linear-gradient(135deg, var(--surface) 0%, #100e18 100%);
-    border: 1px solid var(--border);
-    border-radius: 4px; padding: 14px 18px;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+    background: linear-gradient(180deg, var(--card-bg) 0%, var(--card-bg2) 100%);
+    border: 1px solid var(--card-border);
+    border-left: 4px solid var(--crimson);
+    border-radius: 2px; padding: 16px 18px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.6), inset 0 0 0 1px rgba(255,255,255,0.04);
     display: grid; grid-template-columns: 1fr auto;
     align-items: center; gap: 12px;
     transition: border-color 0.15s;
@@ -272,12 +275,12 @@
     width: 3px; background: var(--accent); opacity: 0.3;
     transition: opacity 0.15s;
   }
-  .exercise-card:hover { border-color: rgba(181,242,61,0.3); }
+  .exercise-card:hover { border-color: rgba(201,168,76,0.5); box-shadow: 0 4px 20px rgba(0,0,0,0.7); }
   .exercise-card:hover::before { opacity: 1; }
-  .ex-name { font-weight: 600; font-size: 15px; margin-bottom: 3px; }
-  .ex-meta { font-size: 12px; color: var(--text-muted); }
-  .ex-meta strong { color: var(--accent); font-family: 'DM Mono', monospace; }
-  .ex-notes { font-size: 12px; color: var(--text-muted); margin-top: 5px; line-height: 1.5; }
+  .ex-name { font-family: 'Cinzel', serif; font-weight: 700; font-size: 16px; margin-bottom: 5px; letter-spacing: 0.3px; color: #8b1a1a; }
+  .ex-meta { font-size: 14px; color: var(--card-text); line-height: 1.5; }
+  .ex-meta strong { color: var(--crimson); font-family: 'DM Mono', monospace; font-weight: 700; font-size: 15px; }
+  .ex-notes { font-size: 13px; color: #5a4020; font-style: italic; font-family: 'Crimson Text', serif; margin-top: 5px; line-height: 1.5; }
   .ex-video {
     display: flex; align-items: center; gap: 5px;
     background: rgba(255,82,82,0.12); border: 1px solid rgba(255,82,82,0.25);
@@ -290,12 +293,15 @@
 
   /* REST DAY */
   .rest-card {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 16px; padding: 40px; text-align: center;
+    background: linear-gradient(180deg, var(--card-bg) 0%, var(--card-bg2) 100%);
+    border: 1px solid var(--card-border);
+    border-top: 4px solid var(--crimson);
+    border-radius: 2px; padding: 40px; text-align: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
   }
   .rest-icon { font-size: 64px; margin-bottom: 16px; }
-  .rest-title { font-family: 'Cinzel', serif; font-size: 36px; color: var(--text-muted); letter-spacing: 2px; }
-  .rest-msg { color: var(--text-muted); font-size: 15px; margin-top: 10px; max-width: 400px; margin-left: auto; margin-right: auto; }
+  .rest-title { font-family: 'Cinzel', serif; font-size: 28px; color: var(--crimson); letter-spacing: 2px; font-weight: 700; }
+  .rest-msg { color: var(--card-text-muted); font-family: 'Crimson Text', serif; font-size: 16px; line-height: 1.6; font-size: 15px; margin-top: 10px; max-width: 400px; margin-left: auto; margin-right: auto; }
 
   /* STATS ROW */
   .stats-row {
@@ -303,62 +309,69 @@
     margin-bottom: 28px;
   }
   .stat-card {
-    background: linear-gradient(135deg, var(--surface) 0%, #100e18 100%);
-    border: 1px solid var(--border);
-    border-radius: 4px; padding: 16px 18px;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+    background: linear-gradient(180deg, var(--card-bg) 0%, var(--card-bg2) 100%);
+    border: 1px solid var(--card-border);
+    border-top: 3px solid var(--crimson);
+    border-radius: 2px; padding: 16px 18px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+    text-align: center;
   }
-  .stat-val { font-family: 'Cinzel', serif; font-size: 30px; font-weight: 700; color: var(--accent); line-height: 1; }
-  .stat-label { font-size: 10px; color: var(--text-muted); letter-spacing: 2px; text-transform: uppercase; margin-top: 4px; font-family: 'Cinzel', serif; }
+  .stat-val { font-family: 'Cinzel', serif; font-size: 30px; font-weight: 900; color: var(--crimson); line-height: 1; }
+  .stat-label { font-size: 10px; color: var(--card-text-muted); letter-spacing: 2px; text-transform: uppercase; margin-top: 6px; font-family: 'Cinzel', serif; font-weight: 600; }
 
   /* CALENDAR */
   .cal-grid {
     display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px;
     margin-top: 16px;
   }
-  .cal-day-header { text-align: center; font-size: 10px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; padding-bottom: 6px; }
+  .cal-day-header { text-align: center; font-size: 9px; color: var(--accent); letter-spacing: 2px; text-transform: uppercase; padding-bottom: 6px; font-family: 'Cinzel', serif; }
   .cal-day {
-    aspect-ratio: 1; border-radius: 8px;
+    aspect-ratio: 1; border-radius: 2px;
     display: flex; align-items: center; justify-content: center;
     font-size: 12px; font-family: 'DM Mono', monospace;
-    background: var(--surface); border: 1px solid var(--border);
+    background: var(--surface2); border: 1px solid var(--border);
     color: var(--text-muted); position: relative;
   }
-  .cal-day.checked { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
-  .cal-day.today { border-color: var(--blue); color: var(--blue); }
-  .cal-day.checked.today { border-color: var(--accent); }
+  .cal-day.checked { background: linear-gradient(180deg, var(--card-bg) 0%, var(--card-bg2) 100%); border-color: var(--crimson); color: var(--crimson); font-weight: 700; }
+  .cal-day.today { border-color: var(--accent); color: var(--accent); font-weight: 700; }
+  .cal-day.checked.today { border-color: var(--accent); background: linear-gradient(180deg, #d8e8b8 0%, #c8d8a0 100%); }
   .cal-day.empty { background: none; border-color: transparent; }
   .cal-day .checkmark { position: absolute; top: 2px; right: 3px; font-size: 9px; }
 
   /* WEEKLY OVERVIEW */
   .week-grid { display: flex; flex-direction: column; gap: 10px; }
   .week-row {
-    background: linear-gradient(135deg, var(--surface) 0%, #100e18 100%);
-    border: 1px solid var(--border);
-    border-radius: 4px; padding: 16px 20px;
-    display: grid; grid-template-columns: 100px 1fr auto;
-    align-items: center; gap: 16px;
+    background: linear-gradient(180deg, var(--card-bg) 0%, var(--card-bg2) 100%);
+    border: 1px solid var(--card-border);
+    border-left: 4px solid var(--crimson);
+    border-radius: 2px; padding: 14px 16px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.5);
+    display: flex; flex-direction: column; gap: 2px;
+    cursor: pointer;
   }
-  .week-day-name { font-family: 'Cinzel', serif; font-size: 16px; font-weight: 700; letter-spacing: 1px; }
-  .week-focus { font-size: 14px; }
-  .week-focus-name { font-weight: 600; }
-  .week-focus-desc { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
-  .week-dur { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text-muted); }
+  .week-day-name { font-family: 'Cinzel', serif; font-size: 15px; font-weight: 700; letter-spacing: 0.5px; color: #8b1a1a; }
+  .week-focus { font-size: 14px; color: var(--card-text); }
+  .week-focus-name { font-weight: 600; color: var(--card-text); }
+  .week-focus-desc { font-size: 13px; color: var(--card-text-muted); font-style: italic; margin-top: 2px; }
+  .week-dur { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--card-text-muted); font-weight: 600; opacity: 0.8; }
 
   /* NUTRITION */
   .nutrition-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
   .nutrition-card {
-    background: linear-gradient(135deg, var(--surface) 0%, #100e18 100%);
-    border: 1px solid var(--border);
-    border-radius: 4px; padding: 20px;
+    background: linear-gradient(180deg, var(--card-bg) 0%, var(--card-bg2) 100%);
+    border: 1px solid var(--card-border);
+    border-top: 3px solid var(--crimson);
+    border-radius: 2px; padding: 20px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.5);
+    color: var(--card-text);
   }
   .nutrition-card h3 {
-    font-family: 'Cinzel', serif; font-size: 18px; letter-spacing: 1px;
-    color: var(--accent); margin-bottom: 10px;
+    font-family: 'Cinzel', serif; font-size: 16px; color: #8b1a1a; letter-spacing: 1px;
+    margin-bottom: 10px;
   }
-  .nutrition-card p { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
-  .nutrition-card .big-num { font-family: 'Cinzel', serif; font-size: 48px; color: var(--text); line-height: 1; margin-bottom: 6px; }
-  .nutrition-card .unit { font-size: 14px; color: var(--text-muted); }
+  .nutrition-card p { font-size: 15px; color: var(--card-text); line-height: 1.7; font-family: 'Crimson Text', serif; }
+  .nutrition-card .big-num { font-family: 'Cinzel', serif; font-size: 40px; color: var(--crimson); line-height: 1; margin-bottom: 6px; }
+  .nutrition-card .unit { font-size: 14px; color: #5a4020; }
 
   /* WEIGHT LOG */
   .weight-input-row {
@@ -372,19 +385,20 @@
   }
   .weight-input-row input:focus { border-color: var(--accent); }
   .btn-primary {
-    background: var(--accent); color: #0e0f0e;
-    border: none; border-radius: 10px;
-    padding: 12px 20px; font-family: 'DM Sans', sans-serif;
-    font-weight: 700; font-size: 14px; cursor: pointer;
-    transition: all 0.15s; letter-spacing: 0.5px;
+    background: var(--crimson); color: var(--parchment);
+    border: 1px solid rgba(201,168,76,0.3); border-radius: 2px;
+    padding: 12px 20px; font-family: 'Cinzel', serif;
+    font-weight: 600; font-size: 13px; cursor: pointer; letter-spacing: 1px;
+    transition: all 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.4);
   }
-  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(181,242,61,0.3); }
+  .btn-primary:hover { background: var(--crimson-mid); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
 
   /* Chart */
   .chart-wrap {
-    background: linear-gradient(135deg, var(--surface) 0%, #100e18 100%);
-    border: 1px solid var(--border);
-    border-radius: 4px; padding: 20px; margin-bottom: 20px;
+    background: linear-gradient(180deg, var(--card-bg) 0%, var(--card-bg2) 100%);
+    border: 1px solid var(--card-border);
+    border-top: 3px solid var(--crimson);
+    border-radius: 2px; padding: 20px; margin-bottom: 20px;
     overflow-x: auto;
   }
   canvas#weightChart { width: 100%; max-height: 200px; }
@@ -392,24 +406,27 @@
   .weight-log-list { display: flex; flex-direction: column; gap: 6px; }
   .weight-log-item {
     display: flex; justify-content: space-between; align-items: center;
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 8px; padding: 10px 14px;
+    background: transparent;
+    border-bottom: 1px solid var(--card-rule);
+    padding: 8px 2px;
     font-family: 'DM Mono', monospace; font-size: 13px;
   }
-  .weight-log-item .wl-date { color: var(--text-muted); }
-  .weight-log-item .wl-weight { color: var(--accent); font-weight: 500; }
+  .weight-log-item:last-child { border-bottom: none; }
+  .weight-log-item .wl-date { color: #5a4020; }
+  .weight-log-item .wl-weight { color: var(--crimson); font-weight: 700; font-family: 'Cinzel', serif; }
   .weight-log-item .wl-diff { font-size: 12px; }
-  .wl-diff.down { color: var(--accent2); }
-  .wl-diff.up { color: var(--red); }
+  .wl-diff.down { color: #3a6020; font-weight: 700; }
+  .wl-diff.up { color: #8b1a1a; font-weight: 700; }
 
   /* NOTIFICATION */
   .notif-card {
-    background: linear-gradient(135deg, var(--surface) 0%, #100e18 100%);
-    border: 1px solid var(--border);
-    border-radius: 4px; padding: 24px; margin-bottom: 20px;
+    background: linear-gradient(180deg, var(--card-bg) 0%, var(--card-bg2) 100%);
+    border: 1px solid var(--card-border);
+    border-top: 3px solid var(--crimson);
+    border-radius: 2px; padding: 24px; margin-bottom: 20px;
   }
-  .notif-card h3 { font-family: 'Cinzel', serif; font-size: 20px; letter-spacing: 1px; color: var(--accent); margin-bottom: 8px; }
-  .notif-card p { font-size: 14px; color: var(--text-muted); margin-bottom: 16px; line-height: 1.6; }
+  .notif-card h3 { font-family: 'Cinzel', serif; font-size: 16px; letter-spacing: 1px; color: var(--crimson); margin-bottom: 8px; }
+  .notif-card p { font-size: 15px; color: #1c1108; margin-bottom: 16px; line-height: 1.7; font-family: 'Crimson Text', serif; }
   .notif-time-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
   .notif-time-row input[type="time"] {
     background: var(--surface2); border: 1px solid var(--border);
@@ -418,15 +435,15 @@
     transition: border-color 0.15s;
   }
   .notif-time-row input[type="time"]:focus { border-color: var(--accent); }
-  .notif-status { font-size: 13px; color: var(--text-muted); margin-top: 10px; }
-  .notif-status.granted { color: var(--accent2); }
+  .notif-status { font-size: 13px; color: #5a4020; margin-top: 10px; font-family: 'Crimson Text', serif; }
+  .notif-status.granted { color: #3a6020; font-weight: 600; }
   .notif-status.denied { color: var(--red); }
 
   /* Page headers */
   .page-header { margin-bottom: 28px; }
   .page-header .page-title {
     font-family: 'Cinzel', serif;
-    font-size: 32px; font-weight: 700; letter-spacing: 3px; color: var(--text);
+    font-size: 32px; font-weight: 700; letter-spacing: 3px; color: var(--accent);
     line-height: 1;
   }
   .page-header .page-sub { font-size: 14px; color: var(--text-muted); margin-top: 6px; }
@@ -434,7 +451,7 @@
   /* PROGRESS PAGE */
   .progress-section { margin-bottom: 32px; }
   .progress-section h2 {
-    font-family: 'Cinzel', serif; font-size: 22px; letter-spacing: 2px;
+    font-family: 'Cinzel', serif; font-size: 14px; letter-spacing: 3px;
     color: var(--accent); margin-bottom: 16px;
     padding-bottom: 8px; border-bottom: 1px solid var(--border);
   }
@@ -492,25 +509,26 @@
   /* h2 in progress/nutrition pages */
   h2 {
     font-family: 'Cinzel', serif;
-    font-size: 14px;
-    letter-spacing: 2px;
+    font-size: 13px;
+    letter-spacing: 3px;
     color: var(--accent);
     margin: 24px 0 14px;
     text-transform: uppercase;
+    text-shadow: 0 0 15px rgba(201,168,76,0.3);
   }
   h3 {
     font-family: 'Cinzel', serif;
     font-size: 13px;
     font-weight: 600;
     letter-spacing: 1px;
-    color: var(--text);
+    color: var(--card-text);
     margin-bottom: 10px;
   }
 
   /* Exercise name font */
-  .ex-name {
-    font-family: 'Cinzel', serif !important;
-    font-size: 13px !important;
+  .ex-name-override-removed {
+    font-family: 'Cinzel', serif;
+    font-size: 16px;
     letter-spacing: 0.5px !important;
   }
 
@@ -557,21 +575,27 @@
   .ex-notes {
     font-family: 'Crimson Text', serif;
     font-style: italic;
-    font-size: 13px;
+    font-size: 14px;
+    color: var(--card-text-muted);
+    line-height: 1.4;
+    margin-top: 4px;
   }
 
   /* HOW TO button */
   .video-btn {
-    font-family: 'Cinzel', serif;
-    font-size: 9px;
-    letter-spacing: 1px;
-    border-radius: 3px !important;
-    border-color: rgba(201,168,76,0.3) !important;
-    color: var(--accent) !important;
+    font-family: 'Cinzel', serif !important;
+    font-size: 9px !important;
+    letter-spacing: 1px !important;
+    border-radius: 2px !important;
+    border: 1px solid var(--crimson) !important;
+    color: var(--crimson) !important;
+    background: transparent !important;
+    padding: 4px 8px !important;
   }
   .video-btn:hover {
-    background: rgba(201,168,76,0.1) !important;
-    border-color: var(--accent) !important;
+    background: rgba(122,16,16,0.1) !important;
+    color: var(--crimson-mid) !important;
+    border-color: var(--crimson-mid) !important;
   }
 
   /* Streak badge on nav */
@@ -681,10 +705,11 @@
         <input type="number" id="weightInput" placeholder="Enter weight (lbs)" step="0.1" min="100" max="500">
         <button class="btn-primary" onclick="logWeight()">⚔ RECORD</button>
       </div>
-      <div class="chart-wrap">
-        <canvas id="weightChart" height="200"></canvas>
+      <div style="background:linear-gradient(180deg,var(--card-bg) 0%,var(--card-bg2) 100%); border:1px solid var(--card-border); border-top:3px solid var(--crimson); border-radius:2px; padding:16px; box-shadow:0 4px 16px rgba(0,0,0,0.5); margin-top:4px;">
+        <canvas id="weightChart" height="180" style="display:block; width:100%;"></canvas>
+        <div style="height:1px; background:var(--card-rule); margin:12px 0;"></div>
+        <div class="weight-log-list" id="weightLogList"></div>
       </div>
-      <div class="weight-log-list" id="weightLogList"></div>
     </div>
 
     <div class="progress-section">
@@ -730,11 +755,11 @@
       </div>
       <div class="nutrition-card" style="grid-column: 1 / -1;">
         <h3>📋 Sample Daily Meal Plan</h3>
-        <p style="margin-bottom:10px;"><strong style="color:var(--text)">Breakfast (7am):</strong> 4 scrambled eggs + 1 cup oats + black coffee — ~600 cal, 40g protein</p>
-        <p style="margin-bottom:10px;"><strong style="color:var(--text)">Lunch (12pm):</strong> 8oz chicken breast + 1 cup rice + vegetables — ~550 cal, 60g protein</p>
-        <p style="margin-bottom:10px;"><strong style="color:var(--text)">Pre-Workout Snack (3pm):</strong> Greek yogurt + banana — ~250 cal, 20g protein</p>
-        <p style="margin-bottom:10px;"><strong style="color:var(--text)">Dinner (7pm):</strong> 8oz 93% ground beef + sweet potato + salad — ~650 cal, 55g protein</p>
-        <p><strong style="color:var(--text)">Evening (9pm):</strong> Cottage cheese or casein shake — ~200 cal, 25g protein</p>
+        <p style="margin-bottom:10px;"><strong style="color:#1c1108">Breakfast (7am):</strong> 4 scrambled eggs + 1 cup oats + black coffee — ~600 cal, 40g protein</p>
+        <p style="margin-bottom:10px;"><strong style="color:#1c1108">Lunch (12pm):</strong> 8oz chicken breast + 1 cup rice + vegetables — ~550 cal, 60g protein</p>
+        <p style="margin-bottom:10px;"><strong style="color:#1c1108">Pre-Workout Snack (3pm):</strong> Greek yogurt + banana — ~250 cal, 20g protein</p>
+        <p style="margin-bottom:10px;"><strong style="color:#1c1108">Dinner (7pm):</strong> 8oz 93% ground beef + sweet potato + salad — ~650 cal, 55g protein</p>
+        <p><strong style="color:#1c1108">Evening (9pm):</strong> Cottage cheese or casein shake — ~200 cal, 25g protein</p>
       </div>
     </div>
   </div>
@@ -750,7 +775,7 @@
 
     <div class="notif-card">
       <h3>🔔 Quest Alerts</h3>
-      <p>Enable quest alerts and set a daily reminder time. Your browser will send you a nudge even when the app isn't open (as long as you've visited the page recently). Works best on desktop or when added to your phone's home screen.</p>
+      <p>Enable daily quest alerts — your herald will deliver a reminder at the appointed hour, even when the grimoire is closed. Works best on desktop or when the app is pinned to your home screen.</p>
       <div class="notif-time-row">
         <input type="time" id="reminderTime" value="08:00">
         <button class="btn-primary" onclick="saveReminder()">ENABLE REMINDERS</button>
@@ -760,19 +785,20 @@
     </div>
 
     <div class="notif-card">
-      <h3>📱 Add to Home Screen</h3>
-      <p>On iPhone: tap the Share button → "Add to Home Screen."<br>On Android: tap the browser menu → "Add to Home Screen" or "Install App."<br><br>This makes IronPath feel like a native app and keeps it one tap away.</p>
+      <h3>📱 Pin to Your Belt (Home Screen)</h3>
+      <p>On iPhone: tap the Share button → "Add to Home Screen."<br>On Android: tap the browser menu → "Add to Home Screen" or "Install App."<br><br>This enchants GnarFit into a native app form — one tap and you're in the dungeon.</p>
     </div>
 
     <div class="notif-card">
-      <h3>🗑️ Reset Data</h3>
-      <p>Clear all check-ins and weight logs. This cannot be undone.</p>
-      <button class="btn-primary" style="background:rgba(255,82,82,0.15); color:var(--red); border:1px solid rgba(255,82,82,0.3); margin-top:10px;" onclick="resetData()">RESET ALL DATA</button>
+      <h3>💀 Wipe the Slate (Reset Data)</h3>
+      <p>Clear all check-ins and weight logs. This is a permanent death — it cannot be undone. Your campaign progress will be lost to the void.</p>
+      <button class="btn-primary" style="background:rgba(139,26,26,0.2); color:#c97a7a; border:1px solid rgba(139,26,26,0.4); margin-top:10px;" onclick="resetData()">⚰️ PERMADEATH — RESET ALL</button>
     </div>
 
     <div class="notif-card">
-      <h3>ℹ️ About GnarFit</h3>
-      <p>Built for a weight loss transformation goal. 5 training days per week using dumbbells, kettlebell, barbell, and adjustable bench. All data is stored locally on your device — nothing is sent anywhere.<br><br>
+      <h3>📜 The Lore (About GnarFit)</h3>
+      <p>Forged for a 295 → 195 lb transformation quest. 5 training days per week using dumbbells, kettlebell, barbell, and adjustable bench. All data is stored locally on your device — nothing is sent anywhere.<br><br>
+      <strong style="color:#1c1108">Program by:</strong> Claude (Anthropic) &nbsp;|&nbsp; <strong style="color:#1c1108">Version:</strong> 1.0</p>
     </div>
   </div>
 </div>
@@ -780,8 +806,8 @@
 <!-- Notification banner -->
 <div class="notify-banner" id="notifyBanner">
   <button class="notify-close" onclick="closeBanner()">✕</button>
-  <div class="notify-banner-title">💪 Time to Train!</div>
-  <div class="notify-banner-msg" id="bannerMsg">Your workout is waiting. Let's get after it.</div>
+  <div class="notify-banner-title">⚔️ Your Quest Awaits!</div>
+  <div class="notify-banner-msg" id="bannerMsg">The dungeon does not clear itself, adventurer.</div>
 </div>
 
 <script>
@@ -904,10 +930,10 @@ function setData(key, val) {
   try { localStorage.setItem(key, JSON.stringify(val)); } catch(e) {}
 }
 
-function getCheckins() { return getData('ironpath_checkins', {}); }
-function setCheckins(c) { setData('ironpath_checkins', c); }
-function getWeightLog() { return getData('ironpath_weights', []); }
-function setWeightLog(w) { setData('ironpath_weights', w); }
+function getCheckins() { return getData('gnarfit_checkins', {}); }
+function setCheckins(c) { setData('gnarfit_checkins', c); }
+function getWeightLog() { return getData('gnarfit_weights', []); }
+function setWeightLog(w) { setData('gnarfit_weights', w); }
 
 function todayKey() {
   const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
@@ -1014,7 +1040,7 @@ function renderToday() {
   const badgeLabel = workout.type === 'strength' ? '⚔️ Battle Training' : workout.type === 'cardio' ? '🔥 The Gauntlet' : '🌿 Healing Arc';
 
   let html = `<span class="type-badge ${badgeClass}">${badgeLabel}</span>`;
-  html += `<p style="color:var(--text-muted); font-size:14px; margin-bottom:20px; line-height:1.6;">${workout.desc}</p>`;
+  html += `<p style="color:var(--text); font-size:16px; margin-bottom:20px; line-height:1.7; font-family:'Crimson Text',serif; opacity:0.85;">${workout.desc}</p>`;
   html += `<div class="section-header">TRIAL EXERCISES</div><div class="exercise-grid">`;
 
   workout.exercises.forEach(ex => {
@@ -1030,8 +1056,8 @@ function renderToday() {
 
   html += `</div>`;
   if (workout.type === 'strength' || workout.type === 'cardio') {
-    html += `<div style="margin-top:20px; padding:14px 18px; background:var(--surface); border:1px solid var(--border); border-radius:10px; font-size:13px; color:var(--text-muted);">
-      <strong style="color:var(--text)">⚠️ Remember:</strong> Warm up 5 min (arm circles, leg swings, 10 bodyweight squats). Rest 60–90 sec between sets. Cool down 5 min with static stretching.
+    html += `<div style="margin-top:20px; padding:14px 18px; background:var(--card-bg2); border:1px solid var(--card-border); border-radius:2px; font-size:14px; color:#4a3820; font-family:'Crimson Text',serif;">
+      <strong style="color:#1c1108">⚠️ Remember:</strong> Warm up 5 min (arm circles, leg swings, 10 bodyweight squats). Rest 60–90 sec between sets. Cool down 5 min with static stretching.
     </div>`;
   }
   content.innerHTML = html;
@@ -1048,7 +1074,7 @@ function toggleCheckin() {
   } else {
     checkins[key] = true;
     const streak = calcStreak();
-    if (streak > 0) showBanner(`You checked in! 🔥 ${streak}-day streak.`);
+    if (streak > 0) showBanner(`⚔️ Quest logged! ${streak > 0 ? `${streak}-day campaign streak. ` : ''}The bards take note.`);
   }
   setCheckins(checkins);
   renderToday();
@@ -1070,15 +1096,15 @@ function renderWeek() {
   const todayDow = new Date().getDay();
   let html = '';
   days.forEach(d => {
-    const color = d.type === 'strength' ? 'var(--blue)' : d.type === 'cardio' ? 'var(--orange)' : d.type === 'recovery' ? 'var(--purple)' : 'var(--text-muted)';
+    const color = '#8b1a1a';
     const isToday = d.dow === todayDow;
     html += `<div class="week-row" style="${isToday ? 'border-color:var(--accent);' : ''}" onclick="showPage('today')">
       <div class="week-day-name" style="color:${color}">${d.name.toUpperCase()}</div>
       <div class="week-focus">
         <div class="week-focus-name">${d.focus}</div>
         <div class="week-focus-desc">${d.desc}</div>
+        <div class="week-dur" style="margin-top:4px;">${d.dur}</div>
       </div>
-      <div class="week-dur">${d.dur}</div>
     </div>`;
   });
   document.getElementById('weekGrid').innerHTML = html;
@@ -1097,7 +1123,7 @@ function renderCalendar() {
   const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
   const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 
-  let html = `<div style="font-family:'Cinzel',serif; font-size:22px; letter-spacing:2px; color:var(--text); margin-bottom:12px;">${monthNames[month]} ${year}</div>`;
+  let html = `<div style="font-family:'Cinzel',serif; font-size:18px; letter-spacing:2px; color:var(--accent); margin-bottom:12px;">${monthNames[month]} ${year}</div>`;
   html += `<div class="cal-grid">`;
   dayNames.forEach(d => html += `<div class="cal-day-header">${d}</div>`);
   for (let i = 0; i < firstDay; i++) html += `<div class="cal-day empty"></div>`;
@@ -1119,7 +1145,7 @@ function renderCalendar() {
 // =========================================================
 function logWeight() {
   const val = parseFloat(document.getElementById('weightInput').value);
-  if (!val || val < 50 || val > 600) { alert('Please enter a valid weight.'); return; }
+  if (!val || val < 50 || val > 600) { alert('⚠️ Invalid stat entry. Please enter your weight in lbs, adventurer.'); return; }
   const log = getWeightLog();
   log.push({ date: todayKey(), weight: val, ts: Date.now() });
   setWeightLog(log);
@@ -1131,7 +1157,7 @@ function renderWeightLog() {
   const log = getWeightLog().slice().reverse();
   const listEl = document.getElementById('weightLogList');
   if (!log.length) {
-    listEl.innerHTML = `<div style="color:var(--text-muted); font-size:14px; padding:20px; text-align:center;">No weight entries yet. Log your starting weight above.</div>`;
+    listEl.innerHTML = `<div style="color:#4a3820; font-size:14px; padding:20px; text-align:center; font-style:italic; font-family:'Crimson Text',serif;">No weight entries yet. Log your starting weight above.</div>`;
     renderWeightChart([]);
     return;
   }
@@ -1162,8 +1188,8 @@ function renderWeightChart(log) {
   canvas.height = 200;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   if (log.length < 2) {
-    ctx.fillStyle = '#7a8a7d';
-    ctx.font = '14px DM Sans';
+    ctx.fillStyle = '#5a4020';
+    ctx.font = 'italic 14px Crimson Text';
     ctx.textAlign = 'center';
     ctx.fillText('Log at least 2 weights to see your chart', canvas.width/2, 100);
     return;
@@ -1189,18 +1215,18 @@ function renderWeightChart(log) {
   // Goal line at 195
   if (min <= 195 && max >= 195) {
     const gy = pad.t + gh * (1 - (195 - min) / (max - min));
-    ctx.strokeStyle = 'rgba(181,242,61,0.3)'; ctx.lineWidth = 1;
+    ctx.strokeStyle = 'rgba(201,168,76,0.3)'; ctx.lineWidth = 1;
     ctx.setLineDash([4, 4]);
     ctx.beginPath(); ctx.moveTo(pad.l, gy); ctx.lineTo(pad.l + gw, gy); ctx.stroke();
     ctx.setLineDash([]);
-    ctx.fillStyle = 'rgba(181,242,61,0.6)'; ctx.font = '11px DM Mono'; ctx.textAlign = 'left';
+    ctx.fillStyle = 'rgba(201,168,76,0.8)'; ctx.font = '11px DM Mono'; ctx.textAlign = 'left';
     ctx.fillText('GOAL: 195', pad.l + 4, gy - 4);
   }
 
   // Line
   ctx.beginPath();
   const grad = ctx.createLinearGradient(pad.l, 0, pad.l + gw, 0);
-  grad.addColorStop(0, '#b5f23d'); grad.addColorStop(1, '#5dfc8d');
+  grad.addColorStop(0, '#7a1010'); grad.addColorStop(1, '#c9a84c');
   ctx.strokeStyle = grad; ctx.lineWidth = 2.5; ctx.lineJoin = 'round';
   weights.forEach((w, i) => {
     const x = pad.l + (gw / (weights.length - 1)) * i;
@@ -1214,8 +1240,8 @@ function renderWeightChart(log) {
     const x = pad.l + (gw / (weights.length - 1)) * i;
     const y = pad.t + gh * (1 - (w - min) / (max - min));
     ctx.beginPath(); ctx.arc(x, y, 4, 0, Math.PI*2);
-    ctx.fillStyle = '#b5f23d'; ctx.fill();
-    ctx.strokeStyle = '#0e0f0e'; ctx.lineWidth = 1.5; ctx.stroke();
+    ctx.fillStyle = '#c9a84c'; ctx.fill();
+    ctx.strokeStyle = '#18110a'; ctx.lineWidth = 1.5; ctx.stroke();
   });
 
   // X labels (show every nth)
@@ -1236,7 +1262,7 @@ let reminderInterval = null;
 function saveReminder() {
   const time = document.getElementById('reminderTime').value;
   if (!time) return;
-  setData('ironpath_reminder_time', time);
+  setData('gnarfit_reminder_time', time);
   requestNotifPermission(time);
 }
 
@@ -1268,9 +1294,9 @@ function scheduleReminder(time) {
       const dow = now.getDay();
       const workout = WORKOUTS[dow];
       if (dow !== 0 && Notification.permission === 'granted') {
-        new Notification('💪 IronPath — Time to Train!', {
-          body: `Today: ${workout.focus}. Let's get after it.`,
-          icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">💪</text></svg>'
+        new Notification('⚔️ GnarFit — Your Quest Awaits!', {
+          body: `${workout.focus} — Roll for initiative, adventurer.`,
+          icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">⚔️</text></svg>'
         });
       }
     }
@@ -1281,10 +1307,10 @@ function testNotification() {
   if (Notification.permission === 'granted') {
     const dow = new Date().getDay();
     const workout = WORKOUTS[dow];
-    new Notification('💪 IronPath — Test Reminder', {
-      body: dow === 0 ? 'Rest day today! Recover well.' : `Today: ${workout.focus}. Time to grind.`,
+    new Notification('🎲 GnarFit — Hark, Adventurer!', {
+      body: dow === 0 ? 'A day of respite is upon thee. Recover thy hit points.' : `${workout.focus} — The dungeon does not clear itself.`,
     });
-    document.getElementById('notifStatus').textContent = '✅ Test notification sent!';
+    document.getElementById('notifStatus').textContent = '✅ Herald dispatched! Quest alert delivered.';
     document.getElementById('notifStatus').className = 'notif-status granted';
   } else {
     document.getElementById('notifStatus').textContent = '⚠️ Enable reminders first.';
@@ -1319,11 +1345,11 @@ function showPage(id) {
 // RESET
 // =========================================================
 function resetData() {
-  if (confirm('This will erase all your check-ins and weight logs. Are you sure?')) {
-    localStorage.removeItem('ironpath_checkins');
-    localStorage.removeItem('ironpath_weights');
+  if (confirm('⚠️ PERMADEATH WARNING\n\nThis will erase your entire campaign history — all check-ins and stat logs. There is no resurrection scroll.\n\nAre you absolutely certain?')) {
+    localStorage.removeItem('gnarfit_checkins');
+    localStorage.removeItem('gnarfit_weights');
     renderToday();
-    alert('All data cleared.');
+    alert('💀 Your campaign history has been wiped. The dungeon awaits anew.');
   }
 }
 
@@ -1333,15 +1359,15 @@ function resetData() {
 window.addEventListener('load', () => {
   renderToday();
   // Resume reminder if set
-  const savedTime = getData('ironpath_reminder_time', null);
+  const savedTime = getData('gnarfit_reminder_time', null);
   if (savedTime && Notification.permission === 'granted') {
     document.getElementById('reminderTime').value = savedTime;
     scheduleReminder(savedTime);
   }
   // Show welcome banner first visit
-  if (!getData('ironpath_visited', false)) {
-    setData('ironpath_visited', true);
-    setTimeout(() => showBanner("Welcome to IronPath! Check in after each workout to build your streak. 💪"), 1500);
+  if (!getData('gnarfit_visited', false)) {
+    setData('gnarfit_visited', true);
+    setTimeout(() => showBanner("Welcome to GnarFit! Check in after each workout to build your streak. 💪"), 1500);
   }
 });
 window.addEventListener('resize', () => { if (document.getElementById('page-progress').classList.contains('active')) renderWeightLog(); });
